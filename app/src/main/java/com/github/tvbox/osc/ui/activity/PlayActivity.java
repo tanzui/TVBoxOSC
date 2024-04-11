@@ -2,6 +2,8 @@ package com.github.tvbox.osc.ui.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -181,6 +183,12 @@ public class PlayActivity extends BaseActivity {
             public void replay() {
                 autoRetryCount = 0;
                 play();
+            }
+
+            @Override
+            public void copyurl() {
+                autoRetryCount = 0;
+                copyplayurl();
             }
 
             @Override
@@ -463,6 +471,7 @@ public class PlayActivity extends BaseActivity {
 
         playUrl(null, null);
         String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
+        //Toast.makeText(this,vs.url,Toast.LENGTH_LONG).show();
         if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
             @Override
             public void status(int code, String info) {
@@ -486,6 +495,15 @@ public class PlayActivity extends BaseActivity {
             return;
         }
         sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url);
+    }
+
+
+    public void copyplayurl() {
+        VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
+        ClipboardManager manager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText(null, vs.url);
+        manager.setPrimaryClip(clipData);
+        Toast.makeText(this,"复制成功",Toast.LENGTH_SHORT).show();
     }
 
     private String playSubtitle;
